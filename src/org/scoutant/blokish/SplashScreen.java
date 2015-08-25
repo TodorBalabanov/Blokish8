@@ -23,8 +23,9 @@ public class SplashScreen extends Activity {
 		try {
 			FileInputStream fis;
 			fis = openFileInput("moves.txt");
-			BufferedReader reader = new BufferedReader( new InputStreamReader(fis));
-			if (reader.readLine()!=null && reader.readLine()!=null) {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					fis));
+			if (reader.readLine() != null && reader.readLine() != null) {
 				delai = DELAY / 3;
 			}
 		} catch (Exception e) {
@@ -39,9 +40,9 @@ public class SplashScreen extends Activity {
 			super.handleMessage(msg);
 		}
 	};
-	
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		finish();
 	};
-	
+
 }
