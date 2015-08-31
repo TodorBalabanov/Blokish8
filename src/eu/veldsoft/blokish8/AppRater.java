@@ -1,4 +1,4 @@
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import android.content.Context;
 import android.content.SharedPreferences;

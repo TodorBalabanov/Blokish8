@@ -1,4 +1,4 @@
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -11,14 +11,17 @@ import android.widget.Button;
 
 public class RateDialog extends Dialog {
 	private SharedPreferences.Editor editor;
-	private final static String APP_PNAME = "org.scoutant.blokish";
+	private final static String APP_PNAME = "eu.veldsoft.blokish8";
 
 	public RateDialog(final Context context) {
 		super(context);
 		editor = context.getSharedPreferences("apprater", 0).edit();
 		setContentView(R.layout.rate);
-		// Cf layout issue
-		// http://groups.google.com/group/android-developers/browse_thread/thread/f0bb813f643604ec?pli=1
+		/*
+		 * Cf layout issue
+		 * http://groups.google.com/group/android-developers/browse_thread
+		 * /thread/f0bb813f643604ec?pli=1
+		 */
 		getWindow().setLayout(LayoutParams.FILL_PARENT,
 				LayoutParams.WRAP_CONTENT);
 		Button now = (Button) findViewById(R.id.now);
@@ -54,5 +57,4 @@ public class RateDialog extends Dialog {
 		editor.putLong("date_firstlaunch", 0);
 		editor.commit();
 	}
-
 }

@@ -1,4 +1,4 @@
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,11 +12,9 @@ public class Help extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.help);
-		View v = findViewById(R.id.video);
-		v.setOnClickListener(new OnClickListener() {
+
+		findViewById(R.id.video).setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				// startActivity( new Intent( Intent.ACTION_VIEW,
-				// Uri.parse("http://www.youtube.com/watch?v=3Q7ow07uaMw")));
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri
 						.parse("vnd.youtube://3Q7ow07uaMw")));
 			}

@@ -11,19 +11,18 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.scoutant.blokish.model.AI;
-import org.scoutant.blokish.model.Board;
-import org.scoutant.blokish.model.Game;
-import org.scoutant.blokish.model.Move;
-import org.scoutant.blokish.model.Piece;
-import org.scoutant.blokish.model.Square;
-
+import eu.veldsoft.blokish8.model.AI;
+import eu.veldsoft.blokish8.model.Board;
+import eu.veldsoft.blokish8.model.Game;
+import eu.veldsoft.blokish8.model.Move;
+import eu.veldsoft.blokish8.model.Piece;
+import eu.veldsoft.blokish8.model.Square;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -50,33 +49,31 @@ import android.widget.TextView;
 public class GameView extends FrameLayout {
 	private static String tag = "activity";
 	private Paint paint = new Paint();
-	public int size;
-	public ButtonsView buttons;
-	public PieceUI selected;
-	public int selectedColor;
-	public int swipe = 0;
-	public int gone = 0;
 
-	public Game game = new Game();
-	public AI ai = new AI(game);
-	public static int[] icons = { R.drawable.red_ball, R.drawable.green_ball,
-			R.drawable.blue_ball, R.drawable.orange_ball,
-			R.drawable.purple_ball, R.drawable.brown_ball,
-			R.drawable.cyan_ball, R.drawable.gray_ball };
-	public static int[] labels = { R.id.red, R.id.green, R.id.blue,
-			R.id.orange, /*R.id.purple, R.id.brown, R.id.cyan, R.id.gray*/ };
+	int size;
+	ButtonsView buttons;
+	PieceUI selected;
+	int selectedColor;
+	int swipe = 0;
+	int gone = 0;
+
+	Game game = new Game();
+
+	AI ai = new AI(game);
 
 	private Drawable[] dots = new Drawable[8];
-	public TextView[] tabs = new TextView[8];
 
-	public UI ui;
+	TextView[] tabs = new TextView[8];
+
+	UI ui;
+
 	/** true if red has acknowlegde no more moves for her */
-	public boolean redOver = false;
-	public SharedPreferences prefs;
-	public boolean thinking = false;
-	public boolean singleline = false;
-	public BusyIndicator indicator;
-	public PieceUI lasts[] = new PieceUI[4];
+	boolean redOver = false;
+	SharedPreferences prefs;
+	boolean thinking = false;
+	boolean singleline = false;
+	BusyIndicator indicator;
+	PieceUI lasts[] = new PieceUI[8];
 
 	public GameView(Context context) {
 		super(context);
@@ -109,17 +106,21 @@ public class GameView extends FrameLayout {
 		inflater.inflate(R.layout.tabs, this);
 
 		showPieces(0);
-		for (int color = 0; color < 4; color++) {
-			dots[color] = context.getResources().getDrawable(icons[color]);
+		for (int color = 0; color < 8; color++) {
+			dots[color] = context.getResources().getDrawable(Common.BALL_ICONS[color]);
 			dots[color].setAlpha(191);
-			tabs[color] = (TextView) findViewById(labels[color]);
-			// let put the listener on the parent view group
+			tabs[color] = (TextView) findViewById(Common.LABELS[color]);
+			/* 
+			 * Let put the listener on the parent view group.
+			 */
 			ViewGroup tab = (ViewGroup) tabs[color].getParent();
 			if (tab != null)
 				tab.setOnClickListener(new ShowPiecesListener(color));
 		}
 
-		// progress indicator
+		/* 
+		 * Progress indicator.
+		 */
 		View iView = new View(context);
 		iView.setLayoutParams(new FrameLayout.LayoutParams(150, 150,
 				Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL));
@@ -147,21 +148,26 @@ public class GameView extends FrameLayout {
 	public boolean onTouchEvent(MotionEvent event) {
 		if (selected != null)
 			return false;
+		
 		doTouch(event);
+		
 		return true;
 	}
 
 	public void doTouch(MotionEvent event) {
 		int action = event.getAction();
+		
 		if (action == MotionEvent.ACTION_DOWN) {
 			downX = event.getRawX();
 			downY = event.getRawY();
 		}
+		
 		if (action == MotionEvent.ACTION_MOVE) {
 			swipePieces(
 					selectedColor,
 					-(swipe + Float.valueOf(event.getRawX() - downX).intValue()));
 		}
+		
 		if (action == MotionEvent.ACTION_UP) {
 			swipe += Float.valueOf(event.getRawX() - downX).intValue();
 			downX = 0;
@@ -172,13 +178,17 @@ public class GameView extends FrameLayout {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		
 		for (int i = 0; i < 20; i++) {
 			canvas.drawLine(i * size, 0, i * size, 20 * size, paint);
 		}
+		
 		canvas.drawLine(20 * size - 1, 0, 20 * size - 1, 20 * size, paint);
+		
 		for (int j = 0; j <= 20; j++) {
 			canvas.drawLine(0, j * size + 1, 20 * size, j * size + 1, paint);
 		}
+		
 		if (prefs.getBoolean("displaySeeds", true)) {
 			for (Square s : game.boards.get(selectedColor).seeds()) {
 				dots[selectedColor].setBounds(s.i * size + size / 4, s.j * size
@@ -209,14 +219,18 @@ public class GameView extends FrameLayout {
 	public void play(Move move, boolean animate) {
 		if (move == null)
 			return;
+		
 		PieceUI ui = findPiece(move.piece);
+		
 		boolean done = game.play(move);
 		if (done) {
 			lasts[ui.piece.color] = ui;
 			ui.place(move.i, move.j, animate);
 		}
+		
 		tabs[move.piece.color].setText(""
 				+ game.boards.get(move.piece.color).score);
+		
 		mayReorderPieces();
 		invalidate();
 	}
@@ -242,7 +256,7 @@ public class GameView extends FrameLayout {
 	}
 
 	public void reorderPieces() {
-		for (int p = 0; p < 4; p++)
+		for (int p = 0; p < 8; p++)
 			reorderPieces(p);
 	}
 
@@ -250,9 +264,11 @@ public class GameView extends FrameLayout {
 		List<PieceUI> pieces = piecesInStore(color);
 		Collections.sort(pieces);
 		Collections.reverse(pieces);
+		
 		for (int p = 0; p < pieces.size(); p++) {
 			PieceUI piece = pieces.get(p);
-			if (singleline) {
+			
+			if (singleline == true) {
 				piece.j0 = 22;
 				if (p < 1) {
 					if (piece.piece.type.equals("I5"))
@@ -281,6 +297,7 @@ public class GameView extends FrameLayout {
 
 	private List<PieceUI> piecesInStore() {
 		List<PieceUI> list = new ArrayList<PieceUI>();
+		
 		for (int k = 0; k < this.getChildCount(); k++) {
 			if (this.getChildAt(k) instanceof PieceUI) {
 				PieceUI piece = (PieceUI) this.getChildAt(k);
@@ -289,15 +306,18 @@ public class GameView extends FrameLayout {
 				}
 			}
 		}
+		
 		return list;
 	}
 
 	private List<PieceUI> piecesInStore(int color) {
 		List<PieceUI> list = new ArrayList<PieceUI>();
+		
 		for (PieceUI piece : piecesInStore()) {
 			if (piece.piece.color == color)
 				list.add(piece);
 		}
+		
 		return list;
 	}
 
@@ -308,6 +328,7 @@ public class GameView extends FrameLayout {
 			ui.piece.reset(piece);
 			play(move, false);
 		}
+		
 		return true;
 	}
 }

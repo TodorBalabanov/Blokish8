@@ -11,12 +11,10 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish.model;
+package eu.veldsoft.blokish8.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.scoutant.blokish.R;
 
 import android.util.Log;
 
@@ -24,9 +22,6 @@ public class Game {
 	public static final String tag = "sc";
 	public List<Board> boards = new ArrayList<Board>();
 	public int size = 20;
-	// public String[] colors = { "Red", "Green", "Blue", "Orange" };
-	public int[] colors = { R.string.Red, R.string.Green, R.string.Blue,
-			R.string.Orange };
 
 	public Game() {
 		reset();
@@ -34,7 +29,7 @@ public class Game {
 
 	public void reset() {
 		boards.clear();
-		for (int k = 0; k < 4; k++) {
+		for (int k = 0; k < 8; k++) {
 			boards.add(new Board(k));
 		}
 	}
@@ -45,10 +40,16 @@ public class Game {
 		moves.add(move);
 	}
 
-	/** @return true if game is over */
+	/**
+	 * @return true if game is over
+	 */
 	public boolean over() {
-		return boards.get(0).over && boards.get(1).over && boards.get(2).over
-				&& boards.get(3).over;
+		boolean result = true;
+		for (int k = 0; k < 8; k++) {
+			result = result && boards.get(k).over;
+		}
+		
+		return result;
 	}
 
 	// TODO adapt message when equal score?
@@ -58,16 +59,18 @@ public class Game {
 	 */
 	public int winner() {
 		int highscore = 0;
-		for (int p = 0; p < 4; p++)
+		for (int p = 0; p < 8; p++)
 			highscore = Math.max(highscore, boards.get(p).score);
-		for (int p = 3; p >= 0; p--) {
+		for (int p = 7; p >= 0; p--) {
 			if (boards.get(p).score == highscore)
 				return p;
 		}
 		return -1;
 	}
 
-	// to be called onto a fresh Game...
+	/**
+	 * to be called onto a fresh Game...
+	 */
 	public boolean replay(List<Move> moves) {
 		for (Move move : moves) {
 			Piece piece = move.piece;
@@ -75,15 +78,16 @@ public class Game {
 			Piece p = boards.get(color).findPieceByType(piece.type);
 			p.reset(piece);
 			move.piece = p;
-			boolean status = play(move);
-			if (status == false)
+
+			if (play(move) == false)
 				return false;
 		}
+
 		return true;
 	}
 
 	protected void add(Piece piece, int i, int j) {
-		for (int k = 0; k < 4; k++) {
+		for (int k = 0; k < 8; k++) {
 			boards.get(k).add(piece, i, j);
 		}
 	}
@@ -97,9 +101,12 @@ public class Game {
 	}
 
 	public boolean fits(Piece p, int i, int j) {
-		return boards.get(0).fits(0, p, i, j) && boards.get(1).fits(1, p, i, j)
-				&& boards.get(2).fits(2, p, i, j)
-				&& boards.get(3).fits(3, p, i, j);
+		boolean result = true;
+		for (int k = 0; k < 8; k++) {
+			result = result && boards.get(k).fits(k, p, i, j);
+		}
+		
+		return result;
 	}
 
 	public boolean play(Move move) {
@@ -162,14 +169,8 @@ public class Game {
 
 	public int scoreEnemySeedsIfAdding(int color, Piece piece, int i, int j) {
 		int result = 0;
-		// for (int c=0; c<4; c++) {
-		// if (c!=color) {
-		// result += scoreEnemySeedsIfAdding( boards.get(c), piece, i, j );
-		// }
-		// }
-		// try consider only Red as enemy, for machine to compete with human!
+		//TODO try consider only Red as enemy, for machine to compete with human!
 		result += scoreEnemySeedsIfAdding(boards.get(0), piece, i, j);
 		return result;
 	}
-
 }

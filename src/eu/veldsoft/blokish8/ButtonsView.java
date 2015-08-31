@@ -11,10 +11,9 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
-import org.scoutant.blokish.model.Move;
-
+import eu.veldsoft.blokish8.model.Move;
 import android.content.Context;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
@@ -72,7 +71,6 @@ public class ButtonsView extends FrameLayout {
 		btn.setBackgroundColor(Color.TRANSPARENT);
 		btn.setOnClickListener(l);
 		return btn;
-
 	}
 
 	protected void setState(ImageButton btn, boolean state) {
@@ -112,7 +110,7 @@ public class ButtonsView extends FrameLayout {
 				((GameView) getParent()).tabs[move.piece.color].setText(""
 						+ game.game.boards.get(move.piece.color).score);
 				game.selected = null;
-				game.ui.turn = (piece.piece.color + 1) % 4;
+				game.ui.turn = (piece.piece.color + 1) % 8;
 				if (PreferenceManager.getDefaultSharedPreferences(context)
 						.getBoolean("ai", true)) {
 					game.ui.think(game.ui.turn);
@@ -123,6 +121,7 @@ public class ButtonsView extends FrameLayout {
 			}
 		}
 	};
+	
 	private OnClickListener doCancel = new OnClickListener() {
 		public void onClick(View v) {
 			Log.d(tag, "cancel...");
@@ -131,5 +130,4 @@ public class ButtonsView extends FrameLayout {
 			ButtonsView.this.setVisibility(INVISIBLE);
 		}
 	};
-
 }

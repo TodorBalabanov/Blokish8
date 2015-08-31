@@ -39,7 +39,7 @@
 		<TextView android:text="- My score is : addition of all the squares of the pieces I placed." android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
 		<TextView android:text="" android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
 
-		<TextView android:text="How to play with Blokish Android app"
+		<TextView android:text="How to play with Blokish8 Android app"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:layout_marginTop="10dp" style="@style/h1" />
 		<TextView android:text="Do notice the smooth Drag&amp;Drop and swipe gestures to place the pieces :" android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
@@ -75,7 +75,7 @@
 
 		<TextView android:text="http://scoutant.org" android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
 			
-		<TextView android:text="Blokish is an Free/Libre open-source app, licence GPL." android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
+		<TextView android:text="Blokish8 is an Free/Libre open-source app, licence GPL." android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
 		<TextView android:text="Fell free to use the code you can get at http://github.com/scoutant." android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
 		<TextView android:text="Stephane Coutant" android:layout_width="fill_parent" android:layout_height="wrap_content"	/>	 		
 			

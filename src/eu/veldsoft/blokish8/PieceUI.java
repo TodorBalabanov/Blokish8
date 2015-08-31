@@ -11,11 +11,10 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
-import org.scoutant.blokish.model.Piece;
-import org.scoutant.blokish.model.Square;
-
+import eu.veldsoft.blokish8.model.Piece;
+import eu.veldsoft.blokish8.model.Square;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -65,11 +64,6 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 	private int localX = 0;
 	private int localY = 0;
 
-	public static int[] icons = { R.drawable.red, R.drawable.green,
-			R.drawable.blue, R.drawable.orange };
-	public static int[] icons_bold = { R.drawable.red_bold,
-			R.drawable.green_bold, R.drawable.blue_bold, R.drawable.orange_bold };
-
 	public boolean movable = true;
 	public boolean moving = false;
 	private boolean rotating = false;
@@ -85,6 +79,7 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 
 	private float rawX;
 	private float rawY;
+
 	// origin offset
 	private int oo;
 	private Context context;
@@ -119,8 +114,8 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 		if (footprint == 5)
 			oo = 2;
 		radius = PADDING * size + footprint * size / 2;
-		square = resources.getDrawable(icons[piece.color]);
-		square_bold = resources.getDrawable(icons_bold[piece.color]);
+		square = resources.getDrawable(Common.REGULAR_ICONS[piece.color]);
+		square_bold = resources.getDrawable(Common.BOLD_ICONS[piece.color]);
 		resetLocalXY();
 	}
 
@@ -157,9 +152,11 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 	public void move(int i, int j) {
 		this.i = i;
 		this.j = j;
-		// Caution : Must invoque doLayout every time i and j is modified!
-		// invalidate() and onDraw() will operate only if
-		// "piece is in viewport". Which will be reevaluated with doLayout()!
+		/*
+		 * Caution : Must invoque doLayout every time i and j is modified!
+		 * invalidate() and onDraw() will operate only if
+		 * "piece is in viewport". Which will be reevaluated with doLayout()!
+		 */
 		doLayout();
 		invalidate();
 	}
@@ -267,6 +264,7 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 	public boolean onLongClick(View v) {
 		if (!movable)
 			return false;
+		
 		GameView game = (GameView) v.getParent();
 		if (game.selected == null) {
 			game.selected = this;
@@ -275,6 +273,7 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 			if (!moving && !rotating)
 				flip();
 		}
+		
 		return false;
 	}
 
@@ -317,6 +316,7 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 			moving = true;
 			return false;
 		}
+		
 		if (action == MotionEvent.ACTION_DOWN) {
 			localX = (int) event.getX();
 			localY = (int) event.getY();
@@ -331,6 +331,7 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 			}
 			bringToFront();
 		}
+		
 		if (action == MotionEvent.ACTION_MOVE && game.selected == this) {
 			bringToFront();
 			if (rotating) {
@@ -356,6 +357,7 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 				moving = true;
 			}
 		}
+		
 		if (action == MotionEvent.ACTION_UP) {
 			moving = false;
 			rotating = false;
@@ -376,39 +378,50 @@ public class PieceUI extends FrameLayout implements OnTouchListener,
 					vibrator.vibrate(20);
 			}
 		}
+		
 		invalidate();
+		
 		return false;
 	}
 
 	private void rotateAgainstGrid() {
 		if (angle > 45)
 			piece.rotate(1);
+		
 		if (angle > 135)
 			piece.rotate(1);
+		
 		if (angle < -45)
 			piece.rotate(-1);
+		
 		if (angle < -135)
 			piece.rotate(-1);
 	}
 
 	public void rotate(int dir) {
 		piece.rotate(dir);
+		
 		invalidate();
 	}
 
 	public void flip() {
 		piece.flip();
+		
 		invalidate();
 	}
 
 	private boolean willRotate() {
 		int r = radius / size;
+
 		if (Math.abs(downX - r) <= 1 && Math.abs(downY - 1) <= 1)
 			return true;
+		
 		if (Math.abs(downX - 1) <= 1 && Math.abs(downY - r) <= 1)
 			return true;
+		
 		if (Math.abs(downX - 2 * r + 1) <= 1 && Math.abs(downY - r) <= 1)
 			return true;
+		
 		return false;
 	}
 

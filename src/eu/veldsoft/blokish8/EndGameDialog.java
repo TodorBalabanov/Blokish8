@@ -1,4 +1,4 @@
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,8 +12,11 @@ public class EndGameDialog extends Dialog {
 			String message, final int level, final int score) {
 		super(context);
 		setContentView(R.layout.endgame);
-		// Cf layout issue
-		// http://groups.google.com/group/android-developers/browse_thread/thread/f0bb813f643604ec?pli=1
+		/*
+		 * Cf layout issue
+		 * http://groups.google.com/group/android-developers/browse_thread
+		 * /thread/f0bb813f643604ec?pli=1
+		 */
 		getWindow().setLayout(LayoutParams.FILL_PARENT,
 				LayoutParams.WRAP_CONTENT);
 		TextView tv = (TextView) findViewById(R.id.message);

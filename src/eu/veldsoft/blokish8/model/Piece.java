@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish.model;
+package eu.veldsoft.blokish8.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +59,7 @@ public class Piece {
 
 	public void reset(Piece ghost) {
 		reset();
+
 		for (Square s : ghost.squares()) {
 			add(s.i, s.j);
 		}
@@ -66,8 +67,10 @@ public class Piece {
 
 	public Piece clone() {
 		Piece clone = new Piece(size, type, rotations, flips);
+
 		for (Square s : squares())
 			clone.add(s);
+
 		return clone;
 	}
 
@@ -78,14 +81,19 @@ public class Piece {
 	public Piece add(int x, int y) {
 		int i = x + h;
 		int j = y + h;
+
 		if (i < 0 || i >= size)
 			throw new IllegalArgumentException();
+
 		if (j < 0 || j >= size)
 			throw new IllegalArgumentException();
+
 		if (a[i][j] > 0)
 			throw new IllegalArgumentException();
+
 		a[i][j] = 1;
 		count++;
+
 		return this;
 	}
 
@@ -112,12 +120,12 @@ public class Piece {
 	public int getValue(int x, int y) {
 		if (x < -h || x >= -h + size || y < -h || y >= -h + size)
 			return 0;
+
 		return get(x, y);
 	}
 
 	public boolean isValue(int x, int y) {
 		return getValue(x, y) > 0;
-
 	}
 
 	public Piece rotate(int dir) {
@@ -133,8 +141,11 @@ public class Piece {
 				}
 			}
 		}
+
 		r = (r + 1) % rotations;
+
 		toggle();
+
 		return this;
 	}
 
@@ -147,13 +158,15 @@ public class Piece {
 					set(x, y, get(-x + 1, y));
 			}
 		}
+
 		f = (f + 1) % flips;
+
 		toggle();
+
 		return this;
 	}
 
 	public String toLabel() {
-		// return "[" + type + ", " + r + ", " +f + " ]";
 		return type;
 	}
 
@@ -165,13 +178,14 @@ public class Piece {
 				str += get(x, y) + (x == -h + size - 1 ? "\n" : " | ");
 			}
 		}
-		return str;
 
+		return str;
 	}
 
 	public boolean touches(int x, int y) {
-		if (isValue(x, y))
+		if (isValue(x, y) == true)
 			return false;
+
 		return (isValue(x - 1, y) || isValue(x, y - 1) || isValue(x + 1, y) || isValue(
 				x, y + 1));
 	}
@@ -179,8 +193,10 @@ public class Piece {
 	public boolean crosses(int x, int y) {
 		if (isValue(x, y))
 			return false;
+
 		if (touches(x, y))
 			return false;
+
 		return (isValue(x - 1, y - 1) || isValue(x + 1, y - 1)
 				|| isValue(x + 1, y + 1) || isValue(x - 1, y + 1));
 	}
@@ -188,14 +204,17 @@ public class Piece {
 	public boolean overlaps(Piece that, int X, int Y) {
 		if (Math.abs(X) > (this.size + that.size) / 2)
 			return false;
+
 		if (Math.abs(Y) > (this.size + that.size) / 2)
 			return false;
+
 		for (int y = -h; y < -h + size; y++) {
 			for (int x = -h; x < -h + size; x++) {
 				if (that.isValue(X + x, Y + y))
 					return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -203,31 +222,37 @@ public class Piece {
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
+
 		Piece other = (Piece) obj;
 		if (other.type != this.type)
 			return false;
+
 		for (int y = -h; y < -h + size; y++) {
 			for (int x = -h; x < -h + size; x++) {
 				if (this.get(x, y) != other.get(x, y))
 					return false;
 			}
 		}
+
 		return true;
 	}
 
 	public List<Square> squares() {
 		List<Square> list = new ArrayList<Square>();
+
 		for (int y = -h; y < -h + size; y++) {
 			for (int x = -h; x < -h + size; x++) {
 				if (isValue(x, y))
 					list.add(new Square(x, y, 3));
 			}
 		}
+
 		return list;
 	}
 
 	public List<Square> squares(int color) {
 		List<Square> list = new ArrayList<Square>();
+
 		if (color != this.color) {
 			return squares();
 		} else {
@@ -240,27 +265,34 @@ public class Piece {
 				}
 			}
 		}
+
 		return list;
 	}
 
 	public List<Square> seeds() {
 		List<Square> list = new ArrayList<Square>();
+
 		for (int y = -h - 1; y < -h + size + 1; y++) {
 			for (int x = -h - 1; x < -h + size + 1; x++) {
 				if (crosses(x, y))
 					list.add(new Square(x, y));
 			}
 		}
+
 		return list;
 	}
 
-	/** @return a represention of the piece, like this sample : 2:I3:0,-1:0,0:0,1 */
+	/**
+	 * @return a represention of the piece, like this sample : 2:I3:0,-1:0,0:0,1
+	 */
 	public static String serialize(Piece piece) {
 		String msg = "" + piece.color;
+		
 		msg += ":" + piece.type;
 		for (Square s : piece.squares()) {
 			msg += ":" + s.i + "," + s.j;
 		}
+		
 		return msg;
 	}
 

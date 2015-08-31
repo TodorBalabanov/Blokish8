@@ -1,4 +1,4 @@
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -44,5 +44,4 @@ public class SplashScreen extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		finish();
 	};
-
 }

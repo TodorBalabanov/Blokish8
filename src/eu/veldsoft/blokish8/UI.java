@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -22,10 +22,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.scoutant.blokish.model.Move;
-import org.scoutant.blokish.model.Piece;
-import org.scoutant.blokish.model.Square;
-
+import eu.veldsoft.blokish8.model.Move;
+import eu.veldsoft.blokish8.model.Piece;
+import eu.veldsoft.blokish8.model.Square;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -81,10 +80,12 @@ public class UI extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
+
 		if (game.selected != null) {
 			menu.add(Menu.NONE, MENU_ITEM_FLIP, Menu.NONE, R.string.flip)
 					.setIcon(android.R.drawable.ic_menu_set_as);
 		}
+
 		menu.add(Menu.NONE, MENU_ITEM_BACK, Menu.NONE, R.string.undo).setIcon(
 				R.drawable.left_48);
 		menu.add(Menu.NONE, MENU_ITEM_NEW, Menu.NONE, R.string.new_game)
@@ -95,48 +96,56 @@ public class UI extends Activity {
 		menu.add(Menu.NONE, MENU_ITEM_PREFERENCES, Menu.NONE,
 				R.string.preferences).setIcon(R.drawable.preferences_48);
 
-		if (devmode) {
+		if (devmode == true) {
 			menu.add(Menu.NONE, MENU_ITEM_THINK, Menu.NONE, "AI").setIcon(
 					android.R.drawable.ic_menu_manage);
 			menu.add(Menu.NONE, MENU_ITEM_HISTORY, Menu.NONE, "hist").setIcon(
 					android.R.drawable.ic_menu_recent_history);
 		}
-		if (!prefs.getBoolean("ai", true)) {
+
+		if (prefs.getBoolean("ai", true) == false) {
 			menu.add(Menu.NONE, MENU_ITEM_PASS_TURN, Menu.NONE, R.string.i_pass)
 					.setIcon(R.drawable.checkmark_48);
 		}
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
+
 		if (item.getItemId() == MENU_ITEM_HELP) {
 			startActivity(new Intent(this, Help.class));
 		}
+
 		if (item.getItemId() == MENU_ITEM_PREFERENCES) {
 			startActivity(new Intent(this, Settings.class));
 		}
+
 		if (item.getItemId() == MENU_ITEM_HISTORY) {
 			Log.d(tag, "" + game.game);
 		}
+
 		if (item.getItemId() == MENU_ITEM_REPLAY) {
 			GameView old = game;
 			newgame();
 			Log.d(tag, "replay # moves : " + old.game.moves.size());
 			game.replay(old.game.moves);
 		}
+
 		if (item.getItemId() == MENU_ITEM_BACK) {
 			List<Move> moves = game.game.moves;
 			int length = moves.size();
-			if (length >= 4) {
-				length -= 4;
+			if (length >= 8) {
+				length -= 8;
 			}
 			moves = moves.subList(0, length);
 			newgame();
 			Log.i(tag, "replay # moves : " + length);
 			game.replay(moves);
 		}
+
 		if (item.getItemId() == MENU_ITEM_NEW) {
 			new AlertDialog.Builder(this)
 					.setMessage(rs.getString(R.string.new_game) + "?")
@@ -156,19 +165,23 @@ public class UI extends Activity {
 								}
 							}).create().show();
 		}
+
 		if (item.getItemId() == MENU_ITEM_THINK) {
 			think(0);
 		}
+
 		if (item.getItemId() == MENU_ITEM_PASS_TURN) {
-			turn = (turn + 1) % 4;
+			turn = (turn + 1) % 8;
 			game.showPieces(turn);
 			game.invalidate();
 		}
+
 		if (item.getItemId() == MENU_ITEM_FLIP) {
 			PieceUI piece = game.selected;
 			if (piece != null)
 				piece.flip();
 		}
+
 		return false;
 	}
 
@@ -188,9 +201,11 @@ public class UI extends Activity {
 
 	private int findLevel() {
 		String level = prefs.getString("aiLevel", "0");
+
 		int l = Integer.valueOf(level);
 		if (l < 0 || l > 3)
 			l = 1;
+
 		return Math.min(l, game.ai.adaptedLevel);
 	}
 
@@ -210,23 +225,30 @@ public class UI extends Activity {
 		protected void onPostExecute(Move move) {
 			if (vibrator != null && !game.redOver)
 				vibrator.vibrate(15);
+
 			if (game.game.over()) {
 				displayWinnerDialog();
 				return;
 			}
+
 			UI.this.game.play(move, true);
+
 			turn++;
-			if (turn < 4)
+
+			if (turn < 8)
 				new AITask().execute(turn);
-			if (turn == 4)
+
+			if (turn == 8)
 				game.indicator.hide();
-			if (turn == 4 && !game.redOver) {
+
+			if (turn == 8 && !game.redOver) {
 				game.thinking = false;
 				turn = 0;
 				game.showPieces(0);
 				new CheckTask().execute();
 			}
-			if (turn == 4 && game.redOver) {
+
+			if (turn == 8 && game.redOver) {
 				Log.d(tag, "Red is dead. game.over ? " + game.game.over());
 				if (game.game.over()) {
 					displayWinnerDialog();
@@ -242,20 +264,20 @@ public class UI extends Activity {
 			Log.d(tag, "game over !");
 			int winner = game.game.winner();
 			int score = game.game.boards.get(winner).score;
+
 			String message = "";
 			boolean redWins = (winner == 0 && prefs.getBoolean("ai", true));
 			if (redWins) {
 				message += rs.getString(R.string.congratulations) + " " + score
 						+ ".";
-				if (findRequestedLevel() < (4 - 1))
+				if (findRequestedLevel() < (8 - 1))
 					message += "\n" + rs.getString(R.string.try_next);
 			} else {
-				// message += "Player " + game.game.colors[winner] +
-				// " wins with score : " + score;
-				message += rs.getString(game.game.colors[winner]);
+				message += rs.getString(Common.COLORS_NAMES[winner]);
 				message += " " + rs.getString(R.string.wins_with_score) + " : ";
 				message += score;
 			}
+
 			new EndGameDialog(UI.this, redWins, message,
 					findRequestedLevel() + 1, score).show();
 		}
@@ -319,6 +341,7 @@ public class UI extends Activity {
 				return true;
 			}
 		}
+
 		return super.onKeyDown(keyCode, event);
 	}
 
@@ -329,9 +352,12 @@ public class UI extends Activity {
 			if (fos == null)
 				return;
 			if (!game.game.over()) {
+				/*
+				 * If game is over we do not save it, so as to open a blank game
+				 * next time.
+				 */
 				fos.write(game.game.toString().getBytes());
-			} // if gave is over we do not save it, so as to open a blank game
-				// next time
+			}
 			fos.close();
 		} catch (FileNotFoundException e) {
 			Log.e(tag, "not found...", e);
@@ -387,5 +413,4 @@ public class UI extends Activity {
 		save();
 		super.onStop();
 	}
-
 }

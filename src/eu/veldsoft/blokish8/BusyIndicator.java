@@ -1,7 +1,6 @@
-package org.scoutant.blokish;
+package eu.veldsoft.blokish8;
 
-import org.scoutant.blokish.R;
-
+import eu.veldsoft.blokish8.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;

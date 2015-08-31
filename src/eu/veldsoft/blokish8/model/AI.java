@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish.model;
+package eu.veldsoft.blokish8.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,22 +63,30 @@ public class AI {
 				}
 			}
 		}
+
 		game.boards.get(color).over = true;
+
 		return false;
 	}
 
 	public Move think(int color, int level) {
 		if (game.boards.get(color).pieces.isEmpty()) {
 			Log.d(tag, "no more pieces for player : " + color);
-			// no big deal, AI will continue for the other players. At the very
-			// end current player will be granted the winning message.
+
+			/*
+			 * no big deal, AI will continue for the other players. At the very
+			 * end current player will be granted the winning message.
+			 */
 			game.boards.get(color).over = true;
+
 			return null;
 		}
 		Log.d(tag,
 				"--------------------------------------------------------------------------------");
 		level = Math.min(level, adaptedLevel);
-		// reinforce player 1 compared to player 2 and 3
+		/*
+		 * reinforce player 1 compared to player 2 and 3
+		 */
 		if (level > 1 && color != 1)
 			level--;
 		Log.d(tag, "thinking for player : " + color + ", upto # moves : "
@@ -95,13 +103,17 @@ public class AI {
 		Log.d(tag, "best move actually is : " + move);
 		// TODO may be many moves with O1 and I2. But only 1 or 2 nice moves!!
 		if (moves.size() > 20) {
-			// let's prune trivial moves
+			/*
+			 * let's prune trivial moves
+			 */
 			for (int k = moves.size() - 1; k >= 2; k--) {
 				if (moves.get(k).piece.count <= 2)
 					moves.remove(k);
 			}
-			// Now if we do have a significant # of moves, lets randomized among
-			// the very best ones.
+			/*
+			 * Now if we do have a significant # of moves, lets randomized among
+			 * the very best ones.
+			 */
 			if (moves.size() > 10) {
 				move = moves.get(random.nextInt(3));
 			} else {
@@ -115,8 +127,10 @@ public class AI {
 	protected List<Move> thinkUpToNMoves(int color, int level) {
 		List<Move> moves = new ArrayList<Move>();
 		Board board = game.boards.get(color);
-		// Most of time , in the middle of the game, any player has about 10 to
-		// 20 seeds.
+		/*
+		 * Most of time , in the middle of the game, any player has about 10 to
+		 * 20 seeds.
+		 */
 		int nbSeeds = board.seeds().size();
 		Log.d(tag, "# of seeds : " + nbSeeds);
 		if (nbSeeds == 0)
@@ -148,8 +162,10 @@ public class AI {
 								}
 								int score = SIZE_WEIGHT * piece.count;
 								if (board.pieces.size() > board.nbPieces - 5) {
-									// encourage moving to the center, this
-									// extra bonus only for pentaminos
+									/*
+									 * encourage moving to the center, this
+									 * extra bonus only for pentaminos
+									 */
 									int io = game.size / 2 - i;
 									int jo = game.size / 2 - j;
 									score -= CENTER_WEIGHT
@@ -161,7 +177,9 @@ public class AI {
 								int enemyscore = game.scoreEnemySeedsIfAdding(
 										board.color, piece, i, j);
 								score -= ENEMY_SEEDS_WEIGHT * enemyscore;
-								// Endgame deep thinking
+								/*
+								 * Endgame deep thinking
+								 */
 								if (board.pieces.size() < 9) {
 									score += CHAINING_WEIGHT
 											* chainingScore(color, move);
@@ -184,7 +202,9 @@ public class AI {
 				}
 			}
 		}
+
 		autoAdaptLevel(startedAt);
+
 		return moves;
 	}
 
@@ -210,7 +230,10 @@ public class AI {
 				ij[i][j] = board.ij[i][j];
 			}
 		}
-		// let's place 'played' onto board.
+		
+		/*
+		 * let's place 'played' onto board.
+		 */
 		for (Square s : played.squares(color)) {
 			int I = move.i + s.i;
 			int J = move.j + s.j;
@@ -243,8 +266,10 @@ public class AI {
 				}
 			}
 		}
+		
 		if (score > 1)
 			Log.d(tag, "may CHAIN with : " + second);
+		
 		return score;
 	}
 
@@ -255,6 +280,7 @@ public class AI {
 			if (I >= 0 && I < 20 && J >= 0 && J < 20 && ij[I][J] > 1)
 				return true;
 		}
+		
 		return false;
 	}
 

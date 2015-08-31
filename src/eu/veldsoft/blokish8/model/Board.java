@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish.model;
+package eu.veldsoft.blokish8.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +36,32 @@ public class Board {
 
 	public Board(int color) {
 		this.color = color;
-		if (color == 0)
-			ij[0][0] = 1;
-		if (color == 1)
-			ij[size - 1][0] = 1;
-		if (color == 2)
-			ij[size - 1][size - 1] = 1;
-		if (color == 3)
-			ij[0][size - 1] = 1;
+		switch (color) {
+		case 0:
+			ij[0][size / 4] = 1;
+			break;
+		case 1:
+			ij[0][3 * size / 4 - 1] = 1;
+			break;
+		case 2:
+			ij[size - 1][size / 4] = 1;
+			break;
+		case 3:
+			ij[size - 1][3 * size / 4 - 1] = 1;
+			break;
+		case 4:
+			ij[size / 4][0] = 1;
+			break;
+		case 5:
+			ij[3 * size / 4 - 1][0] = 1;
+			break;
+		case 6:
+			ij[size / 4][size - 1] = 1;
+			break;
+		case 7:
+			ij[3 * size / 4 - 1][size - 1] = 1;
+			break;
+		}
 
 		pieces.add(new Piece(color, 3, "X5", 1, 1).add(0, 0).add(-1, 0)
 				.add(0, -1).add(1, 0).add(0, 1));
@@ -95,6 +113,7 @@ public class Board {
 		pieces.add(new Piece(color, 2, "I2", 2, 1).add(0, 0).add(0, 1));
 
 		pieces.add(new Piece(color, 1, "O1", 1, 1).add(0, 0));
+
 		nbPieces = pieces.size();
 	}
 
@@ -103,6 +122,7 @@ public class Board {
 			if (piece.type.equals(type))
 				return piece;
 		}
+
 		return null;
 	}
 
@@ -136,15 +156,18 @@ public class Board {
 	 */
 	public int scoreSeedsIfAdding(Piece piece, int i, int j) {
 		int result = 0;
+
 		for (int b = 0; b < 20; b++)
 			for (int a = 0; a < 20; a++)
 				ab[a][b] = ij[a][b];
+
 		for (Square s : piece.squares(this.color)) {
 			try {
 				ab[i + s.i][j + s.j] = s.value;
 			} catch (Exception e) {
 			}
 		}
+
 		for (Square seed : piece.seeds()) {
 			try {
 				if (ab[i + seed.i][j + seed.j] == 0)
@@ -152,10 +175,12 @@ public class Board {
 			} catch (Exception e) {
 			}
 		}
+
 		for (int b = 0; b < 20; b++)
 			for (int a = 0; a < 20; a++)
 				if (ab[a][b] == 1)
 					result++;
+
 		return result;
 	}
 
@@ -167,15 +192,18 @@ public class Board {
 		for (Square s : piece.squares()) {
 			if (outside(s, i, j))
 				return true;
+
 			if (ij[i + s.i][j + s.j] > (piece.color == color ? 1 : 2))
 				return true;
 		}
+
 		return false;
 	}
 
 	public boolean fits(int color, Piece piece, int i, int j) {
 		if (i < -1 || i > size || j < -1 || j > size)
 			return false;
+
 		return !overlaps(color, piece, i, j);
 	}
 
@@ -184,6 +212,7 @@ public class Board {
 			if (!outside(s, i, j) && ij[i + s.i][j + s.j] == 1)
 				return true;
 		}
+
 		return false;
 	}
 
@@ -193,22 +222,26 @@ public class Board {
 
 	public String toString(int jmax) {
 		String str = "";
+
 		for (int j = 0; j < jmax; j++) {
 			for (int i = 0; i < size; i++) {
 				str += ij[i][j] + (i == size - 1 ? "\n" : " | ");
 			}
 		}
+
 		return str;
 	}
 
 	public List<Square> seeds() {
 		List<Square> list = new ArrayList<Square>();
+
 		for (int j = 0; j < size; j++) {
 			for (int i = 0; i < size; i++) {
 				if (ij[i][j] == 1)
 					list.add(new Square(i, j));
 			}
 		}
+
 		return list;
 	}
 }

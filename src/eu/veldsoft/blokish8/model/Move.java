@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish.model;
+package eu.veldsoft.blokish8.model;
 
 public class Move implements Comparable<Move> {
 

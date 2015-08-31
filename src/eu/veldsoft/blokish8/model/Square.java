@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.scoutant.blokish.model;
+package eu.veldsoft.blokish8.model;
 
 public class Square implements Comparable<Square> {
 
@@ -35,7 +35,9 @@ public class Square implements Comparable<Square> {
 
 	// TODO add criteria including max distance from origin corner : strategy is
 	// encouraging invading other's camp before filling one's own area
-	/** So as to order square against center proximity */
+	/**
+	 * So as to order square against center proximity
+	 */
 	public int compareTo(Square that) {
 		return this.distance() - that.distance();
 	}
@@ -43,5 +45,4 @@ public class Square implements Comparable<Square> {
 	private int distance() {
 		return (i - 10) * (i - 10) + (j - 10) * (j - 10);
 	}
-
 }
